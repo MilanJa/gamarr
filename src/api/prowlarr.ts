@@ -6,10 +6,10 @@ const apiKey = () => config.prowlarr.apiKey;
 
 async function prowlarrFetch<T>(path: string): Promise<T> {
   const url = `${baseUrl()}${path}`;
-  const sep = path.includes("?") ? "&" : "?";
-  const fullUrl = `${url}${sep}apikey=${apiKey()}`;
 
-  const response = await fetch(fullUrl);
+  const response = await fetch(url, {
+    headers: { "X-Api-Key": apiKey() },
+  });
   if (!response.ok) {
     const body = await response.text().catch(() => "");
     throw new Error(`Prowlarr ${path} failed (${response.status}): ${body}`);
