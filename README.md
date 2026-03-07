@@ -70,15 +70,57 @@ Open http://localhost:3000 in your browser.
 
 ## Docker
 
-### Docker Compose (recommended)
+### Docker Hub (easiest)
+
+The image is available at [`milanjansen/gamarr`](https://hub.docker.com/r/milanjansen/gamarr).
+
+**Docker Compose:**
+
+Create a `docker-compose.yml`:
+
+```yaml
+services:
+  gamarr:
+    image: milanjansen/gamarr:latest
+    container_name: gamarr
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - STEAM_WEB_API_KEY=your_steam_web_api_key
+      - PROWLARR_URL=http://prowlarr:9696
+      - PROWLARR_API_KEY=your_prowlarr_api_key
+      - PORT=3000
+    volumes:
+      - ./data:/app/data
+```
+
+```bash
+docker compose up -d
+```
+
+**Docker CLI:**
+
+```bash
+docker run -d \
+  --name gamarr \
+  -p 3000:3000 \
+  -e STEAM_WEB_API_KEY=your_key \
+  -e PROWLARR_URL=http://prowlarr:9696 \
+  -e PROWLARR_API_KEY=your_key \
+  -v ./data:/app/data \
+  milanjansen/gamarr:latest
+```
+
+### Build from source
 
 ```bash
 cp .env.sample .env
 # Edit .env with your keys
-docker compose up -d
+docker compose up -d --build
 ```
 
-### Docker CLI
+Or manually:
 
 ```bash
 docker build -t gamarr .
