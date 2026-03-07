@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["bun"],
+    "paths": {
+      "hono/jsx/jsx-runtime": ["./node_modules/hono/dist/types/jsx/jsx-runtime"],
+      "hono/jsx/jsx-dev-runtime": ["./node_modules/hono/dist/types/jsx/jsx-dev-runtime"],
+      "hono/jsx": ["./node_modules/hono/dist/types/jsx"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
