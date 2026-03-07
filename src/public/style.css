@@ -575,6 +575,53 @@ nav {
   text-transform: uppercase;
 }
 
+/* ===== Scoring Settings ===== */
+.scoring-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.scoring-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: var(--bg-card);
+}
+
+.scoring-group legend {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0 0.4rem;
+}
+
+.scoring-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.scoring-group input[type="number"] {
+  width: 90px;
+  padding: 0.3rem 0.5rem;
+  background: var(--bg-input, var(--bg-primary));
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.scoring-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 /* ===== Toast ===== */
 .toast-container {
   position: fixed;

@@ -12,6 +12,7 @@ export const Layout: FC<LayoutProps> = ({ title, currentPath, children }) => {
     { href: "/wishlist", label: "Wishlist", icon: "⭐" },
     { href: "/calendar", label: "Calendar", icon: "📅" },
     { href: "/settings", label: "Settings", icon: "⚙️" },
+    { href: "/feed/released", label: "RSS", icon: "📡" },
   ];
 
   return (

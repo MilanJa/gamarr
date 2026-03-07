@@ -153,3 +153,60 @@ if (settingsForm) {
     }
   });
 }
+
+// Save scoring settings
+const scoringForm = document.getElementById("scoring-form");
+if (scoringForm) {
+  scoringForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const inputs = scoringForm.querySelectorAll("input[type='number']");
+    const params = {};
+    inputs.forEach((input) => {
+      params[input.name] = Number(input.value);
+    });
+
+    const btn = scoringForm.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    try {
+      const res = await fetch("/api/settings/scoring", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+      });
+
+      if (res.ok) {
+        showToast("Scoring settings saved");
+      } else {
+        throw new Error("Failed");
+      }
+    } catch {
+      showToast("Failed to save scoring settings", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Save Scoring";
+    }
+  });
+
+  // Reset to defaults
+  const resetBtn = document.getElementById("reset-scoring");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/settings/scoring/defaults");
+        if (!res.ok) throw new Error("Failed");
+        const defaults = await res.json();
+        const inputs = scoringForm.querySelectorAll("input[type='number']");
+        inputs.forEach((input) => {
+          if (defaults[input.name] !== undefined) {
+            input.value = defaults[input.name];
+          }
+        });
+        showToast("Reset to defaults — click Save to apply");
+      } catch {
+        showToast("Failed to load defaults", "error");
+      }
+    });
+  }
+}

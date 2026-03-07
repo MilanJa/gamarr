@@ -7,6 +7,7 @@ import wishlistRoutes from "./routes/wishlist";
 import searchRoutes from "./routes/search";
 import settingsRoutes from "./routes/settings";
 import calendarRoutes from "./routes/calendar";
+import feedRoutes from "./routes/feed";
 import { startRefreshScheduler } from "./jobs/refresh-releases";
 
 // Initialize database on startup
@@ -23,6 +24,7 @@ app.route("/", wishlistRoutes);
 app.route("/", searchRoutes);
 app.route("/", settingsRoutes);
 app.route("/", calendarRoutes);
+app.route("/", feedRoutes);
 
 console.log(`🎮 Gamarr running at http://localhost:${config.port}`);
 

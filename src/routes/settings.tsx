@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { Layout } from "../views/layout";
 import { getIndexers } from "../api/prowlarr";
-import { getSelectedIndexerIds, setSelectedIndexerIds } from "../db/settings";
+import { getSelectedIndexerIds, setSelectedIndexerIds, getScoringParams, setScoringParams, DEFAULT_SCORING } from "../db/settings";
+import type { ScoringParams } from "../db/settings";
 
 const app = new Hono();
 
@@ -17,6 +18,7 @@ app.get("/settings", async (c) => {
   }
 
   const savedMessage = c.req.query("saved") === "1" ? "Settings saved successfully!" : "";
+  const scoring = getScoringParams();
 
   return c.html(
     <Layout title="Settings" currentPath="/settings">
@@ -68,6 +70,106 @@ app.get("/settings", async (c) => {
         )}
       </div>
 
+      <div class="settings-section">
+        <h2>RSS Feed Scoring</h2>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+          Adjust how the RSS feed ranks torrent results. Higher-scoring results are picked as the "best guess" download.
+        </p>
+
+        <form id="scoring-form">
+          <div class="scoring-grid">
+            <fieldset class="scoring-group">
+              <legend>Seeders</legend>
+              <label>
+                Points per seeder
+                <input type="number" name="seederWeight" value={String(scoring.seederWeight)} min="0" max="100" step="1" />
+              </label>
+              <label>
+                Max seeders counted
+                <input type="number" name="seederCap" value={String(scoring.seederCap)} min="1" max="10000" step="10" />
+              </label>
+            </fieldset>
+
+            <fieldset class="scoring-group">
+              <legend>Age</legend>
+              <label>
+                Fresh window (days)
+                <input type="number" name="ageFreshDays" value={String(scoring.ageFreshDays)} min="1" max="90" step="1" />
+              </label>
+              <label>
+                Fresh bonus (max pts)
+                <input type="number" name="ageFreshBonus" value={String(scoring.ageFreshBonus)} min="0" max="2000" step="10" />
+              </label>
+              <label>
+                Mid-age window (days)
+                <input type="number" name="ageMidDays" value={String(scoring.ageMidDays)} min="1" max="365" step="1" />
+              </label>
+              <label>
+                Mid-age bonus (pts)
+                <input type="number" name="ageMidBonus" value={String(scoring.ageMidBonus)} min="0" max="1000" step="10" />
+              </label>
+            </fieldset>
+
+            <fieldset class="scoring-group">
+              <legend>Size</legend>
+              <label>
+                Ideal min (GB)
+                <input type="number" name="sizeIdealMinGB" value={String(scoring.sizeIdealMinGB)} min="0" max="500" step="1" />
+              </label>
+              <label>
+                Ideal max (GB)
+                <input type="number" name="sizeIdealMaxGB" value={String(scoring.sizeIdealMaxGB)} min="1" max="1000" step="1" />
+              </label>
+              <label>
+                Ideal bonus (pts)
+                <input type="number" name="sizeIdealBonus" value={String(scoring.sizeIdealBonus)} min="0" max="2000" step="10" />
+              </label>
+              <label>
+                OK min (GB)
+                <input type="number" name="sizeOkMinGB" value={String(scoring.sizeOkMinGB)} min="0" max="500" step="0.5" />
+              </label>
+              <label>
+                OK max (GB)
+                <input type="number" name="sizeOkMaxGB" value={String(scoring.sizeOkMaxGB)} min="1" max="1000" step="1" />
+              </label>
+              <label>
+                OK bonus (pts)
+                <input type="number" name="sizeOkBonus" value={String(scoring.sizeOkBonus)} min="0" max="1000" step="10" />
+              </label>
+              <label>
+                Too-small threshold (GB)
+                <input type="number" name="sizeTooSmallGB" value={String(scoring.sizeTooSmallGB)} min="0" max="100" step="0.1" />
+              </label>
+              <label>
+                Too-small penalty (pts)
+                <input type="number" name="sizeTooSmallPenalty" value={String(scoring.sizeTooSmallPenalty)} min="0" max="2000" step="10" />
+              </label>
+            </fieldset>
+
+            <fieldset class="scoring-group">
+              <legend>Other</legend>
+              <label>
+                Torrent protocol bonus
+                <input type="number" name="protocolTorrentBonus" value={String(scoring.protocolTorrentBonus)} min="0" max="500" step="10" />
+              </label>
+              <label>
+                Points per leecher
+                <input type="number" name="leecherWeight" value={String(scoring.leecherWeight)} min="0" max="50" step="1" />
+              </label>
+              <label>
+                Max leechers counted
+                <input type="number" name="leecherCap" value={String(scoring.leecherCap)} min="1" max="1000" step="10" />
+              </label>
+            </fieldset>
+          </div>
+
+          <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+            <button type="submit" class="btn btn-save">Save Scoring</button>
+            <button type="button" id="reset-scoring" class="btn btn-steam">Reset to Defaults</button>
+          </div>
+        </form>
+      </div>
+
       <script src="/public/app.js"></script>
     </Layout>
   );
@@ -83,6 +185,22 @@ app.post("/api/settings/indexers", async (c) => {
   } catch {
     return c.json({ error: "Invalid request" }, 400);
   }
+});
+
+// API: Save scoring settings
+app.post("/api/settings/scoring", async (c) => {
+  try {
+    const body = await c.req.json<Partial<ScoringParams>>();
+    setScoringParams(body);
+    return c.json({ success: true });
+  } catch {
+    return c.json({ error: "Invalid request" }, 400);
+  }
+});
+
+// API: Get default scoring params
+app.get("/api/settings/scoring/defaults", (c) => {
+  return c.json(DEFAULT_SCORING);
 });
 
 export default app;
