@@ -40,6 +40,7 @@ export const GameCard: FC<GameCardProps> = ({ game, wishlisted }) => {
               data-name={game.name}
               data-image={game.headerImage}
               data-release={game.releaseDate}
+              data-release-ts={game.releaseTimestamp ?? ""}
             >
               ★ Wishlisted
             </button>
@@ -51,6 +52,7 @@ export const GameCard: FC<GameCardProps> = ({ game, wishlisted }) => {
               data-name={game.name}
               data-image={game.headerImage}
               data-release={game.releaseDate}
+              data-release-ts={game.releaseTimestamp ?? ""}
             >
               ☆ Add to Wishlist
             </button>

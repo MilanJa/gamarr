@@ -10,6 +10,7 @@ export const Layout: FC<LayoutProps> = ({ title, currentPath, children }) => {
   const navItems = [
     { href: "/", label: "Upcoming", icon: "🎮" },
     { href: "/wishlist", label: "Wishlist", icon: "⭐" },
+    { href: "/calendar", label: "Calendar", icon: "📅" },
     { href: "/settings", label: "Settings", icon: "⚙️" },
   ];
 

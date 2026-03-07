@@ -6,6 +6,8 @@ import upcomingRoutes from "./routes/upcoming";
 import wishlistRoutes from "./routes/wishlist";
 import searchRoutes from "./routes/search";
 import settingsRoutes from "./routes/settings";
+import calendarRoutes from "./routes/calendar";
+import { startRefreshScheduler } from "./jobs/refresh-releases";
 
 // Initialize database on startup
 getDb();
@@ -20,8 +22,12 @@ app.route("/", upcomingRoutes);
 app.route("/", wishlistRoutes);
 app.route("/", searchRoutes);
 app.route("/", settingsRoutes);
+app.route("/", calendarRoutes);
 
 console.log(`🎮 Gamarr running at http://localhost:${config.port}`);
+
+// Start the release date refresh scheduler
+startRefreshScheduler();
 
 export default {
   port: config.port,

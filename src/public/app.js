@@ -24,6 +24,8 @@ document.addEventListener("click", async (e) => {
   const name = btn.dataset.name;
   const headerImage = btn.dataset.image;
   const releaseDate = btn.dataset.release;
+  const releaseTs = btn.dataset.releaseTs;
+  const releaseTimestamp = releaseTs ? Number(releaseTs) : undefined;
 
   btn.disabled = true;
   btn.textContent = "Adding...";
@@ -32,7 +34,7 @@ document.addEventListener("click", async (e) => {
     const res = await fetch("/api/wishlist", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ appId: Number(appId), name, headerImage, releaseDate }),
+      body: JSON.stringify({ appId: Number(appId), name, headerImage, releaseDate, releaseTimestamp }),
     });
 
     if (res.ok) {
@@ -102,6 +104,22 @@ document.addEventListener("click", async (e) => {
     showToast("Failed to remove from wishlist", "error");
   }
 });
+
+// Sort dropdown
+const sortSelect = document.getElementById("sort-select");
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
+    const url = new URL(window.location);
+    const value = sortSelect.value;
+    if (value === "default") {
+      url.searchParams.delete("sort");
+    } else {
+      url.searchParams.set("sort", value);
+    }
+    url.searchParams.delete("page");
+    window.location = url.toString();
+  });
+}
 
 // Save settings
 const settingsForm = document.getElementById("settings-form");

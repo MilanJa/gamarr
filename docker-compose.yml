@@ -1,0 +1,14 @@
+services:
+  gamarr:
+    build: .
+    container_name: gamarr
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PROWLARR_URL=${PROWLARR_URL}
+      - PROWLARR_API_KEY=${PROWLARR_API_KEY}
+      - STEAM_WEB_API_KEY=${STEAM_WEB_API_KEY}
+      - PORT=3000
+    volumes:
+      - ./data:/app/data

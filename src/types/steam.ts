@@ -1,28 +1,106 @@
-export interface SteamFeaturedCategories {
-  coming_soon: {
-    id: string;
-    name: string;
-    items: SteamComingSoonItem[];
+// ===== IStoreQueryService Response Types =====
+
+export interface StoreQueryResponse {
+  response: {
+    metadata: {
+      total_matching_records: number;
+      start: number;
+      count: number;
+    };
+    ids: Array<{ appid: number }>;
+    store_items: StoreItem[];
   };
 }
 
-export interface SteamComingSoonItem {
+export interface StoreItem {
+  item_type: number;
   id: number;
-  type: number;
+  success: number;
+  visible: boolean;
   name: string;
-  discounted: boolean;
-  discount_percent: number;
-  original_price: number | null;
-  final_price: number | null;
-  currency: string;
-  large_capsule_image: string;
-  small_capsule_image: string;
-  header_image: string;
-  discount_expiration?: number;
-  windows_available: boolean;
-  mac_available: boolean;
-  linux_available: boolean;
+  store_url_path: string;
+  appid: number;
+  type: number;
+  is_early_access?: boolean;
+  is_coming_soon?: boolean;
+  tagids?: number[];
+  content_descriptorids?: number[];
+  related_items?: {
+    parent_appid?: number;
+    demo_appid?: number[];
+  };
+  categories?: {
+    supported_player_categoryids?: number[];
+    feature_categoryids?: number[];
+    controller_categoryids?: number[];
+  };
+  basic_info?: {
+    short_description?: string;
+    publishers?: Array<{ name: string; creator_clan_account_id?: number }>;
+    developers?: Array<{ name: string; creator_clan_account_id?: number }>;
+    franchises?: Array<{ name: string; creator_clan_account_id?: number }>;
+  };
+  tags?: Array<{ tagid: number; weight: number }>;
+  assets?: {
+    asset_url_format: string;
+    main_capsule?: string;
+    small_capsule?: string;
+    header?: string;
+    hero_capsule?: string;
+    library_capsule?: string;
+    library_capsule_2x?: string;
+    library_hero?: string;
+    library_hero_2x?: string;
+    community_icon?: string;
+    page_background?: string;
+    page_background_path?: string;
+    raw_page_background?: string;
+  };
+  release?: {
+    steam_release_date?: number;
+    original_release_date?: number;
+    is_coming_soon?: boolean;
+    custom_release_date_message?: string;
+    coming_soon_display?: string;
+    is_early_access?: boolean;
+  };
+  best_purchase_option?: {
+    packageid?: number;
+    bundleid?: number;
+    purchase_option_name?: string;
+    final_price_in_cents?: string;
+    original_price_in_cents?: string;
+    formatted_final_price?: string;
+    formatted_original_price?: string;
+    discount_pct?: number;
+    is_free?: boolean;
+  };
 }
+
+export interface SearchSuggestionsResponse {
+  response: {
+    metadata: {
+      total_matching_records: number;
+      start: number;
+      count: number;
+    };
+    ids: Array<{ appid: number }>;
+    store_items: StoreItem[];
+  };
+}
+
+// ===== Sort Options =====
+
+export enum StoreQuerySort {
+  Default = 0,
+  Name = 1,
+  Released = 2,
+  LowestPrice = 6,
+  HighestPrice = 7,
+  NewAndTrending = 12,
+}
+
+// ===== Legacy appdetails endpoint (kept for detail page) =====
 
 export interface SteamAppDetails {
   success: boolean;
@@ -66,14 +144,24 @@ export interface SteamAppDetails {
   };
 }
 
+// ===== Unified Game Model =====
+
 export interface UpcomingGame {
   appId: number;
   name: string;
   headerImage: string;
   releaseDate: string;
+  releaseTimestamp?: number;
   comingSoon: boolean;
   shortDescription?: string;
   developers?: string[];
   genres?: string[];
   price?: string;
+}
+
+export interface PaginatedResult {
+  games: UpcomingGame[];
+  totalCount: number;
+  start: number;
+  count: number;
 }

@@ -1,7 +1,10 @@
 import { Database } from "bun:sqlite";
 import { join } from "path";
+import { existsSync, mkdirSync } from "fs";
 
-const DB_PATH = join(import.meta.dir, "..", "..", "gamarr.db");
+const DATA_DIR = join(import.meta.dir, "..", "..", "data");
+if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+const DB_PATH = join(DATA_DIR, "gamarr.db");
 
 let db: Database;
 
@@ -23,6 +26,7 @@ function migrate(db: Database) {
       name TEXT NOT NULL,
       header_image TEXT,
       release_date TEXT,
+      release_timestamp INTEGER,
       added_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -31,4 +35,11 @@ function migrate(db: Database) {
       value TEXT NOT NULL
     );
   `);
+
+  // Add release_timestamp column if missing (migration for existing DBs)
+  try {
+    db.exec(`ALTER TABLE wishlist ADD COLUMN release_timestamp INTEGER`);
+  } catch {
+    // Column already exists
+  }
 }
