@@ -37,6 +37,9 @@ export const GameCard: FC<GameCardProps> = ({ game, wishlisted }) => {
               class="btn btn-wishlisted"
               data-action="remove-wishlist"
               data-appid={game.appId}
+              data-name={game.name}
+              data-image={game.headerImage}
+              data-release={game.releaseDate}
             >
               ★ Wishlisted
             </button>

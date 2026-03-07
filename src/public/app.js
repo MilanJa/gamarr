@@ -38,6 +38,7 @@ document.addEventListener("click", async (e) => {
     if (res.ok) {
       btn.className = "btn btn-wishlisted";
       btn.dataset.action = "remove-wishlist";
+      btn.disabled = false;
       btn.textContent = "★ Wishlisted";
       showToast(`${name} added to wishlist`);
     } else {
@@ -88,6 +89,7 @@ document.addEventListener("click", async (e) => {
         // On the upcoming page, switch back to add button
         btn.className = "btn btn-wishlist";
         btn.dataset.action = "add-wishlist";
+        btn.disabled = false;
         btn.textContent = "☆ Add to Wishlist";
         showToast("Removed from wishlist");
       }

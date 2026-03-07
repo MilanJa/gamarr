@@ -280,6 +280,7 @@ nav {
 
 .btn-search:hover {
   background: var(--accent-hover);
+  color: var(--text-white);
 }
 
 .btn-save {
