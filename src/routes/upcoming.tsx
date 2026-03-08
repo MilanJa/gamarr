@@ -37,6 +37,15 @@ app.get("/", async (c) => {
     error = e instanceof Error ? e.message : "Failed to fetch upcoming releases";
   }
 
+  // When sorting by release date, sort closest date first and push indeterminate dates to the end
+  if (sortOption.sort === StoreQuerySort.Released) {
+    result.games.sort((a, b) => {
+      const aTs = a.releaseTimestamp ?? Infinity;
+      const bTs = b.releaseTimestamp ?? Infinity;
+      return aTs - bTs;
+    });
+  }
+
   const wishlistedIds = getWishlistedAppIds();
   const totalPages = Math.ceil(result.totalCount / PAGE_SIZE);
 
