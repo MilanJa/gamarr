@@ -210,3 +210,60 @@ if (scoringForm) {
     });
   }
 }
+
+// Steam wishlist import
+const importForm = document.getElementById("steam-import-form");
+if (importForm) {
+  importForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const steamId = document.getElementById("steam-id-input").value.trim();
+    if (!steamId || !/^\d{17}$/.test(steamId)) {
+      showToast("Enter a valid 17-digit Steam ID", "error");
+      return;
+    }
+
+    const btn = document.getElementById("import-btn");
+    const progress = document.getElementById("import-progress");
+    const status = progress.querySelector(".import-status");
+    const fill = progress.querySelector(".import-progress-fill");
+    const details = progress.querySelector(".import-details");
+
+    btn.disabled = true;
+    btn.textContent = "Importing...";
+    progress.style.display = "block";
+    status.textContent = "Fetching wishlist from Steam and importing games...";
+    fill.style.width = "10%";
+    details.textContent = "This may take a while due to Steam API rate limits (~1.5s per game).";
+
+    try {
+      const res = await fetch("/api/import/steam-wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ steamId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Import failed");
+      }
+
+      fill.style.width = "100%";
+      status.textContent = "Import complete!";
+      const parts = [];
+      if (data.imported > 0) parts.push(`${data.imported} imported`);
+      if (data.skipped > 0) parts.push(`${data.skipped} already in wishlist`);
+      if (data.failed > 0) parts.push(`${data.failed} failed`);
+      details.textContent = `${data.total} games found. ${parts.join(", ")}.`;
+      showToast(`Imported ${data.imported} games from Steam wishlist`);
+    } catch (err) {
+      fill.style.width = "0%";
+      status.textContent = "Import failed";
+      details.textContent = err.message;
+      showToast(err.message, "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Import Wishlist";
+    }
+  });
+}

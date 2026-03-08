@@ -268,3 +268,32 @@ export async function fetchReleaseInfoForApps(
 
   return results;
 }
+
+// ===== Steam Wishlist Import =====
+
+export interface SteamWishlistItem {
+  appid: number;
+  priority: number;
+  date_added: number;
+}
+
+interface SteamWishlistResponse {
+  response: {
+    items: SteamWishlistItem[];
+  };
+}
+
+export async function fetchSteamWishlist(steamId: string): Promise<SteamWishlistItem[]> {
+  const url = `${STEAM_API}/IWishlistService/GetWishlist/v1/?key=${config.steam.webApiKey}&steamid=${steamId}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error("Wishlist is private or Steam ID is invalid");
+    }
+    throw new Error(`Steam wishlist API failed: ${response.status}`);
+  }
+
+  const data = (await response.json()) as SteamWishlistResponse;
+  return data.response?.items ?? [];
+}

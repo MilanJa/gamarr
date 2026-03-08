@@ -42,7 +42,6 @@ Edit `.env`:
 PROWLARR_URL=http://localhost:9696
 PROWLARR_API_KEY=your_prowlarr_api_key
 STEAM_WEB_API_KEY=your_steam_web_api_key
-PORT=3000
 ```
 
 | Variable            | Description                                       |
@@ -50,7 +49,6 @@ PORT=3000
 | `STEAM_WEB_API_KEY` | Get one at https://steamcommunity.com/dev/apikey  |
 | `PROWLARR_URL`      | Base URL of your Prowlarr instance                |
 | `PROWLARR_API_KEY`  | Prowlarr API key (Settings → General in Prowlarr) |
-| `PORT`              | Server port (default: `3000`)                     |
 
 ### 3. Run
 
@@ -90,7 +88,6 @@ services:
       - STEAM_WEB_API_KEY=your_steam_web_api_key
       - PROWLARR_URL=http://prowlarr:9696
       - PROWLARR_API_KEY=your_prowlarr_api_key
-      - PORT=3000
     volumes:
       - ./data:/app/data
 ```
