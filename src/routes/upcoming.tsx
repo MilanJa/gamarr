@@ -39,10 +39,17 @@ app.get("/", async (c) => {
 
   // When sorting by release date, sort closest date first and push indeterminate dates to the end
   if (sortOption.sort === StoreQuerySort.Released) {
+    // Only full dates (e.g. "Mar 15, 2026") are concrete — vague ones like
+    // "Coming soon", "2026", "Q1 2026", "March 2026" get pushed to the end
+    const isConcreteDate = (rd: string) => /\d{1,2}, \d{4}$/.test(rd);
+
     result.games.sort((a, b) => {
-      const aTs = a.releaseTimestamp ?? Infinity;
-      const bTs = b.releaseTimestamp ?? Infinity;
-      return aTs - bTs;
+      const aConcrete = isConcreteDate(a.releaseDate);
+      const bConcrete = isConcreteDate(b.releaseDate);
+      if (aConcrete && !bConcrete) return -1;
+      if (!aConcrete && bConcrete) return 1;
+      if (!aConcrete && !bConcrete) return 0;
+      return (a.releaseTimestamp ?? Infinity) - (b.releaseTimestamp ?? Infinity);
     });
   }
 
